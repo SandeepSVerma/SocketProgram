@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+using ConsoleSocketProgram;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading;
 
 public class Server
 {
@@ -36,7 +34,9 @@ public class Server
 
         byte[] buffer = new byte[1024];
         int bytesRead = stream.Read(buffer, 0, buffer.Length);
-        string received = Encoding.UTF8.GetString(buffer, 0, bytesRead).Trim();
+        //string received = Encoding.UTF8.GetString(buffer, 0, bytesRead).Trim();
+        //decrypt
+        string received = CryptoHelper.Decrypt(buffer.Take(bytesRead).ToArray());
 
         string[] parts = received.Split('-');
         string setkey = parts[0];
@@ -47,7 +47,9 @@ public class Server
             foreach (string item in values)
             {
                 string msg = $"{DateTime.Now}";
-                byte[] outBuffer = Encoding.UTF8.GetBytes(msg);
+                //byte[] outBuffer = Encoding.UTF8.GetBytes(msg);
+                //encrypt
+                byte[] outBuffer = CryptoHelper.Encrypt(msg);
                 stream.Write(outBuffer, 0, outBuffer.Length);
                 Thread.Sleep(1000);
             }
